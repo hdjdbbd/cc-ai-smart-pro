@@ -1,0 +1,110 @@
+import express from 'express';
+import cors from 'cors';
+import dotenv from 'dotenv';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+dotenv.config();
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const app = express();
+const PORT = process.env.PORT || 3000;
+
+app.use(cors());
+app.use(express.json());
+app.use(express.static(path.join(__dirname, 'public')));
+
+// Language Prompts & System Guidance
+const SYSTEM_PROMPT = `
+You are "CC AI SMART PRO", an advanced, friendly, and ultra-reliable AI Assistant with deep expertise in general assistance and Indian Financial Markets (Nifty 50, Bank Nifty, Stocks).
+CRITICAL RULES:
+1. Default to clean, polite conversational Hindi (Devanagari script) or natural Hinglish as preferred by user.
+2. If asked about market analysis, provide clear, disciplined, and educational insights. 
+3. NEVER promise guaranteed returns or claim false certainty. Always include a short risk reminder.
+4. Clearly state that manual OHLC data analyses are for educational reference and you are not a SEBI registered advisor.
+5. Keep voice answers concise, clear, and easy to speak via Text-To-Speech (avoid complex markdown tables in voice replies).
+`;
+
+// Gemini API Integration (Safe Server-Side Relay)
+app.post('/api/chat', async (req, res) => {
+  const { message, language, mode, context } = req.body;
+  const apiKey = process.env.GEMINI_API_KEY;
+
+  if (!apiKey) {
+    return res.status(500).json({
+      error: 'API_KEY_MISSING',
+      reply: 'सर्वर पर Gemini API Key कॉन्फ़िगर नहीं है। कृपया .env फ़ाइल में GEMINI_API_KEY सेट करें।'
+    });
+  }
+
+  if (!message || message.trim() === '') {
+    return res.status(400).json({ error: 'Message cannot be empty.' });
+  }
+
+  try {
+    const userPrompt = `
+Language to reply in: ${language || 'Hindi'}
+Task Context: ${mode || 'General Voice Assistant'}
+Additional Context: ${context ? JSON.stringify(context) : 'None'}
+
+User Message: ${message}
+`;
+
+    // Google Gemini 2.5 Flash Endpoint
+    const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
+
+    const response = await fetch(endpoint, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        contents: [
+          {
+            role: 'user',
+            parts: [{ text: `${SYSTEM_PROMPT}\n\n${userPrompt}` }]
+          }
+        ],
+        generationConfig: {
+          temperature: 0.6,
+          maxOutputTokens: 800
+        }
+      })
+    });
+
+    if (!response.ok) {
+      const errData = await response.json().catch(() => ({}));
+      console.error('Gemini API Error:', errData);
+      return res.status(response.status).json({
+        error: 'AI_PROVIDER_ERROR',
+        reply: 'AI सेवा से कनेक्ट करने में समस्या हुई। कृपया थोड़ी देर बाद पुनः प्रयास करें।'
+      });
+    }
+
+    const data = await response.json();
+    const candidateText = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+
+    if (!candidateText) {
+      return res.status(502).json({
+        error: 'EMPTY_RESPONSE',
+        reply: 'AI से कोई उत्तर प्राप्त नहीं हुआ।'
+      });
+    }
+
+    return res.json({ reply: candidateText });
+  } catch (err) {
+    console.error('Server Handler Error:', err);
+    return res.status(500).json({
+      error: 'INTERNAL_ERROR',
+      reply: 'आंतरिक सर्वर त्रुटि हुई। कृपया नेटवर्क जांचें।'
+    });
+  }
+});
+
+app.listen(PORT, () => {
+  console.log(`\n===========================================`);
+  console.log(` CC AI SMART PRO Server is running!`);
+  console.log(` URL: http://localhost:${PORT}`);
+  console.log(` Mobile Access: http://<YOUR-LOCAL-IP>:${PORT}`);
+  console.log(`===========================================\n`);
+});

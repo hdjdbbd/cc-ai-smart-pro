@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>CC AI SMART PRO</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="app-container">
+
+    <!-- Top Navigation Bar -->
+    <header class="top-nav">
+      <div class="brand">
+        <div class="logo-orb"></div>
+        <div>
+          <h1 class="logo-title">CC AI SMART <span class="pro-badge">PRO</span></h1>
+          <span class="online-indicator"><span class="dot"></span> सिस्टम सक्रिय</span>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button id="quickMuteBtn" class="icon-btn" title="Mute/Unmute Audio">🔊</button>
+        <span id="activeLangTag" class="lang-tag">HI</span>
+      </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+
+      <!-- 1. HOME TAB -->
+      <section id="tab-home" class="view-panel active">
+        <div class="home-hero">
+          <div class="welcome-box">
+            <h2>नमस्ते! मैं CC AI हूँ</h2>
+            <p>आपका व्यक्तिगत वॉइस और ट्रेडिंग असिस्टेंट। माइक दबाकर कुछ भी पूछें।</p>
+          </div>
+          
+          <div class="quick-mic-card">
+            <button class="hero-orb-btn" id="heroStartVoice">
+              <span class="mic-glyph">🎙️</span>
+            </button>
+            <p class="orb-subtext">बात करने के लिए टैप करें</p>
+          </div>
+
+          <div class="stat-grid">
+            <div class="stat-card">
+              <span class="stat-label">वर्चुअल बैलेंस</span>
+              <span class="stat-value" id="homeBalance">₹10,00,000.00</span>
+            </div>
+            <div class="stat-card">
+              <span class="stat-label">सक्रिय पोजीशन</span>
+              <span class="stat-value" id="homeOpenPositions">0</span>
+            </div>
+          </div>
+
+          <div class="quick-links">
+            <button class="action-chip" data-prompt="निफ्टी 50 का आज का तकनीकी रुख क्या है?">📊 निफ्टी आउटलुक</button>
+            <button class="action-chip" data-prompt="इंट्राडे ट्रेडिंग में स्टॉप लॉस कैसे लगाएं?">🎯 स्टॉप लॉस गाइड</button>
+            <button class="action-chip" data-prompt="सपोर्ट और रेजिस्टेंस कैसे पहचाने?">📈 सपोर्ट-रेजिस्टेंस</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- 2. VOICE CHAT TAB -->
+      <section id="tab-voice" class="view-panel">
+        <div class="voice-screen">
+          <div class="voice-status-wrap">
+            <div id="voiceStatusPill" class="status-pill idle">रेडी (तैयार)</div>
+            <p id="speechInterim" class="live-transcript">सुनने के लिए माइक दबाएं...</p>
+          </div>
+
+          <div class="orb-stage">
+            <div class="visualizer-ring" id="pulseRing"></div>
+            <button id="mainMicBtn" class="giant-mic-btn" aria-label="Microphone">
+              <span class="mic-icon">🎙️</span>
+            </button>
+          </div>
+
+          <!-- Controls for Speech -->
+          <div class="voice-controls">
+            <button id="stopSpeakBtn" class="tool-btn danger" title="बोलना रोकें">⏹️ रोकें</button>
+            <button id="repeatAnswerBtn" class="tool-btn" title="दोबारा सुनें">🔁 दोहराएं</button>
+            <button id="voiceLangToggle" class="tool-btn highlight">🌐 भाषा बदलें</button>
+          </div>
+
+          <div class="voice-answer-card">
+            <div class="card-header">
+              <span>AI उत्तर</span>
+              <button class="mini-copy-btn" id="voiceAnswerCopy">📋 कॉपी</button>
+            </div>
+            <div id="voiceAnswerText" class="answer-content">यहाँ AI का उत्तर दिखेगा।</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 3. TEXT CHAT TAB -->
+      <section id="tab-chat" class="view-panel">
+        <div class="chat-wrapper">
+          <div id="chatMessages" class="chat-feed">
+            <div class="msg ai">
+              <div class="bubble">
+                नमस्ते! मैं CC AI SMART PRO हूँ। आप यहाँ मुझसे हिंदी, Hinglish या English में बात कर सकते हैं।
+              </div>
+              <div class="msg-meta">
+                <button class="tts-btn" data-text="नमस्ते! मैं CC AI SMART PRO हूँ।">🔊</button>
+                <button class="copy-btn">📋</button>
+              </div>
+            </div>
+          </div>
+
+          <form id="chatForm" class="chat-input-bar">
+            <input type="text" id="chatInput" placeholder="यहाँ प्रश्न टाइप करें..." autocomplete="off">
+            <button type="submit" id="sendBtn" class="send-btn">
+              <span>भेजें</span>
+            </button>
+          </form>
+        </div>
+      </section>
+
+      <!-- 4. TRADING ASSISTANT TAB -->
+      <section id="tab-trading" class="view-panel">
+        <div class="trading-panel">
+          <div class="mode-toggles">
+            <div class="segmented-control">
+              <button class="seg-btn active" data-asset="NIFTY50">Nifty 50</button>
+              <button class="seg-btn" data-asset="BANKNIFTY">Bank Nifty</button>
+            </div>
+            <div class="segmented-control">
+              <button class="seg-btn active" data-horizon="INTRADAY">इंट्राडे (Intraday)</button>
+              <button class="seg-btn" data-horizon="SWING">स्विंग (Swing)</button>
+            </div>
+          </div>
+
+          <div class="market-status-box">
+            <span class="badge warning">⚠️ Manual & Delayed Input</span>
+            <p class="disclaimer-note">यह टूल केवल आपके द्वारा दिए गए डेटा पर तकनीकी विश्लेषण करता है। लाइव मार्केट डेटा बिना ब्रोकर क्रेडेंशियल के उपलब्ध नहीं होता। यह SEBI सलाह नहीं है।</p>
+          </div>
+
+          <!-- OHLC Input Box -->
+          <div class="card card-ohlc">
+            <h3>मैनुअल OHLC इनपुट डेटा</h3>
+            <div class="ohlc-grid">
+              <div class="input-field">
+                <label>Open (शुरुआती)</label>
+                <input type="number" id="ohlcOpen" step="0.05" placeholder="e.g. 24500">
+              </div>
+              <div class="input-field">
+                <label>High (उच्चतम)</label>
+                <input type="number" id="ohlcHigh" step="0.05" placeholder="e.g. 24620">
+              </div>
+              <div class="input-field">
+                <label>Low (न्यूनतम)</label>
+                <input type="number" id="ohlcLow" step="0.05" placeholder="e.g. 24430">
+              </div>
+              <div class="input-field">
+                <label>Close / CMP</label>
+                <input type="number" id="ohlcClose" step="0.05" placeholder="e.g. 24580">
+              </div>
+            </div>
+            <button id="analyzeOHLCBtn" class="btn-primary full-width">📊 विश्लेषण करें और सिग्नल प्राप्त करें</button>
+          </div>
+
+          <!-- Signal Output Card -->
+          <div id="tradingSignalCard" class="card signal-card hidden">
+            <div class="signal-badge-wrap">
+              <span id="signalBadge" class="signal-badge wait">WAIT / कोई स्पष्ट ट्रेंड नहीं</span>
+            </div>
+            <div class="calc-metrics">
+              <div><span>Pivot Point (PP):</span> <b id="valPP">--</b></div>
+              <div><span>Resistance 1 (R1):</span> <b id="valR1">--</b></div>
+              <div><span>Support 1 (S1):</span> <b id="valS1">--</b></div>
+              <div><span>संभावित SL:</span> <b id="valSL">--</b></div>
+              <div><span>संभावित Target:</span> <b id="valTarget">--</b></div>
+            </div>
+            <div class="ai-reasoning">
+              <h4>विश्लेषण कारण:</h4>
+              <p id="analysisReasonText">डेटा सबमिट करें...</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 5. PAPER TRADING TAB -->
+      <section id="tab-paper" class="view-panel">
+        <div class="paper-panel">
+          
+          <div class="wallet-overview">
+            <div class="wallet-stat">
+              <span>उपलब्ध वर्चुअल कैश</span>
+              <h2 id="paperCash">₹10,00,000.00</h2>
+            </div>
+            <div class="wallet-stat">
+              <span>कुल नेट P&L</span>
+              <h3 id="paperTotalPnL" class="neutral">₹0.00</h3>
+            </div>
+          </div>
+
+          <!-- Order Entry Box -->
+          <div class="card">
+            <h3>प्रैक्टिस ट्रेड लगाएं</h3>
+            <form id="orderForm" class="order-form">
+              <div class="form-row">
+                <div class="input-field">
+                  <label>इंडेक्स / स्टॉक नाम</label>
+                  <select id="tradeSymbol">
+                    <option value="NIFTY 50">NIFTY 50</option>
+                    <option value="BANK NIFTY">BANK NIFTY</option>
+                    <option value="RELIANCE">RELIANCE</option>
+                    <option value="TCS">TCS</option>
+                    <option value="HDFCBANK">HDFCBANK</option>
+                  </select>
+                </div>
+                <div class="input-field">
+                  <label>ट्रेड प्रकार</label>
+                  <select id="tradeType">
+                    <option value="BUY">BUY (Long)</option>
+                    <option value="SELL">SELL (Short)</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="input-field">
+                  <label>प्रवेश मूल्य (Entry Price ₹)</label>
+                  <input type="number" id="tradePrice" step="0.05" min="1" required placeholder="0.00">
+                </div>
+                <div class="input-field">
+                  <label>मात्रा (Quantity)</label>
+                  <input type="number" id="tradeQty" step="1" min="1" value="25" required>
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="input-field">
+                  <label>ट्रांजैक्शन शुल्क (₹) [डेमो=0]</label>
+                  <input type="number" id="tradeCost" step="0.5" min="0" value="0">
+                </div>
+              </div>
+
+              <button type="submit" class="btn-primary full-width">ऑर्डर सबमिट करें</button>
+            </form>
+          </div>
+
+          <!-- Active Positions -->
+          <div class="card">
+            <h3>सक्रिय पोजीशन्स (Active Positions)</h3>
+            <div id="positionsList" class="table-wrap">
+              <p class="empty-state">कोई ओपन पोजीशन नहीं है।</p>
+            </div>
+          </div>
+
+          <!-- Completed Trades -->
+          <div class="card">
+            <div class="card-header">
+              <h3>ट्रेड इतिहास (Trade History)</h3>
+              <button id="clearHistoryBtn" class="mini-btn danger">इतिहास रीसेट करें</button>
+            </div>
+            <div id="tradeHistoryList" class="table-wrap">
+              <p class="empty-state">कोई समाप्त ट्रेड दर्ज नहीं है।</p>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- 6. SETTINGS TAB -->
+      <section id="tab-settings" class="view-panel">
+        <div class="settings-panel">
+          <div class="card">
+            <h3>भाषा और वॉइस सेटिंग्स</h3>
+            
+            <div class="input-field">
+              <label>प्राथमिक भाषा (Default Hindi)</label>
+              <select id="settingLanguage">
+                <option value="Hindi" selected>हिन्दी (Hindi)</option>
+                <option value="Hinglish">हिंग्लिश (Hinglish)</option>
+                <option value="English">English</option>
+                <option value="Bengali">বাংলা (Bengali)</option>
+                <option value="Bhojpuri">भोजपुरी (Bhojpuri)</option>
+                <option value="Marathi">मराठी (Marathi)</option>
+                <option value="Tamil">தமிழ் (Tamil)</option>
+                <option value="Telugu">తెలుగు (Telugu)</option>
+              </select>
+            </div>
+
+            <div class="input-field">
+              <label>वॉइस इंजन (Hindi Female Voice Preferred)</label>
+              <select id="settingVoiceSelect">
+                <option value="">वॉइस लोड हो रही है...</option>
+              </select>
+              <span id="voiceNotice" class="sub-hint"></span>
+            </div>
+
+            <div class="slider-group">
+              <label>बोलने की गति (Speech Rate): <span id="rateVal">1.0</span>x</label>
+              <input type="range" id="speechRate" min="0.7" max="1.4" step="0.1" value="1.0">
+            </div>
+
+            <div class="slider-group">
+              <label>पिच (Voice Pitch): <span id="pitchVal">1.0</span></label>
+              <input type="range" id="speechPitch" min="0.6" max="1.4" step="0.1" value="1.0">
+            </div>
+
+            <button id="testVoiceBtn" class="btn-secondary full-width">🔊 आवाज़ टेस्ट करें</button>
+          </div>
+
+          <div class="card">
+            <h3>सिस्टम प्राथमिकताएं</h3>
+            <div class="toggle-row">
+              <label for="textOnlyToggle">टेक्स्ट-ओनली मोड (No Auto-TTS)</label>
+              <input type="checkbox" id="textOnlyToggle">
+            </div>
+            <div class="toggle-row">
+              <label>वर्चुअल बैलेंस रीसेट (₹10,00,000)</label>
+              <button id="resetBalanceBtn" class="mini-btn danger">रीसेट करें</button>
+            </div>
+          </div>
+
+          <div class="card info-box">
+            <h4>CC AI SMART PRO v1.0</h4>
+            <p>सुरक्षित जेमिनी 2.5/1.5 फ्लैश बैकएंड आर्किटेक्चर द्वारा संचालित।</p>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Bottom Mobile Navigation Bar -->
+    <nav class="bottom-nav">
+      <button class="nav-tab active" data-tab="tab-home">
+        <span class="icon">🏠</span>
+        <span class="label">होम</span>
+      </button>
+      <button class="nav-tab" data-tab="tab-voice">
+        <span class="icon">🎙️</span>
+        <span class="label">वॉइस</span>
+      </button>
+      <button class="nav-tab" data-tab="tab-chat">
+        <span class="icon">💬</span>
+        <span class="label">चैट</span>
+      </button>
+      <button class="nav-tab" data-tab="tab-trading">
+        <span class="icon">📈</span>
+        <span class="label">ट्रेडिंग</span>
+      </button>
+      <button class="nav-tab" data-tab="tab-paper">
+        <span class="icon">📝</span>
+        <span class="label">पेपर ट्रेड</span>
+      </button>
+      <button class="nav-tab" data-tab="tab-settings">
+        <span class="icon">⚙️</span>
+        <span class="label">सेटिंग्स</span>
+      </button>
+    </nav>
+
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
